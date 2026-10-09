@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Texas McCombs Hat Pre-Order</title>
+  <meta name="description" content="Group pre-order for custom Texas McCombs hats from Branded Bills.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="images/logo.png">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <span class="brand-text">Texas McCombs <span class="brand-sub">Hat Pre-Order</span></span>
+    </div>
+    <a class="topbar-link" href="#order">Order now</a>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">Group order from Branded Bills</p>
+        <h1>Custom Texas McCombs hats, ordered together.</h1>
+        <p class="lede">
+          Four designs, one 3D PVC rubber patch, one week to get in. We only place the order if we hit
+          the minimums, and you only pay once we do.
+        </p>
+        <div class="countdown" id="countdown" aria-live="polite">
+          <span class="countdown-label">Orders close</span>
+          <span class="countdown-value" id="countdown-value">&hellip;</span>
+          <span class="countdown-date" id="countdown-date"></span>
+        </div>
+        <a class="btn btn-primary btn-lg" href="#order">Pick your hats</a>
+      </div>
+      <div class="hero-art">
+        <img src="images/logo.png" alt="Texas McCombs patch design" width="420" height="330">
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-num">1</span>
+          <h3>Pick your hats</h3>
+          <p>Choose any of the four designs and how many of each you want. One size, adjustable snapback.</p>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <h3>Submit the form</h3>
+          <p>Name, email, phone, class year. That's it. No payment yet.</p>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <h3>We hit the minimums</h3>
+          <p>Branded Bills needs <strong id="min-total-copy">24</strong> hats total and <strong id="min-design-copy">6</strong> of each design. Designs that don't hit 6 get dropped.</p>
+        </li>
+        <li>
+          <span class="step-num">4</span>
+          <h3>Pay, then we order</h3>
+          <p>After the window closes, <span class="organizer-name">Colby</span> sends payment details. Venmo or Zelle before the order is placed.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Progress -->
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Where we stand</h2>
+        <p class="muted" id="progress-updated">Loading current totals&hellip;</p>
+      </div>
+      <div class="progress-total card">
+        <div class="progress-head">
+          <span class="progress-title">Total hats ordered</span>
+          <span class="progress-count"><strong id="total-count">0</strong> / <span id="total-min">24</span></span>
+        </div>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="24" aria-valuenow="0" id="total-bar">
+          <div class="bar-fill" id="total-fill"></div>
+          <div class="bar-goal" id="total-goal"></div>
+        </div>
+        <p class="progress-note" id="total-note"></p>
+      </div>
+      <div class="progress-grid" id="design-progress"></div>
+      <p class="muted small" id="demo-banner" hidden>
+        Demo mode: no backend connected, so orders are stored only in this browser. See the README to connect Google Sheets.
+      </p>
+    </div>
+  </section>
+
+  <!-- Designs + order form -->
+  <section class="section" id="order">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Choose your hats</h2>
+        <p class="muted">All four carry the same <span id="patch-type">3D PVC rubber patch</span> (<span id="patch-size">2.8 in x 2.17 in</span>). Renders are approximate.</p>
+      </div>
+
+      <div class="designs" id="designs"></div>
+
+      <form id="order-form" class="order-form card" novalidate>
+        <h3>Your info</h3>
+
+        <div class="field-grid">
+          <label class="field">
+            <span class="field-label">Full name</span>
+            <input type="text" name="name" autocomplete="name" required maxlength="80" placeholder="Bevo Longhorn">
+          </label>
+          <label class="field">
+            <span class="field-label">Email</span>
+            <input type="email" name="email" autocomplete="email" required maxlength="120" placeholder="you@utexas.edu">
+          </label>
+          <label class="field">
+            <span class="field-label">Phone</span>
+            <input type="tel" name="phone" autocomplete="tel" required maxlength="30" placeholder="(512) 555-0123">
+          </label>
+          <fieldset class="field">
+            <legend class="field-label">Class year</legend>
+            <div class="choice-row" id="class-year-choices"></div>
+          </fieldset>
+          <fieldset class="field">
+            <legend class="field-label">How you'll pay</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="payment" value="Venmo" required><span>Venmo</span></label>
+              <label class="choice"><input type="radio" name="payment" value="Zelle"><span>Zelle</span></label>
+            </div>
+          </fieldset>
+          <label class="field field-wide">
+            <span class="field-label">Notes <span class="optional">(optional)</span></span>
+            <input type="text" name="notes" maxlength="200" placeholder="Anything we should know">
+          </label>
+        </div>
+
+        <!-- honeypot: bots fill this, humans never see it -->
+        <div class="hp" aria-hidden="true">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        </div>
+
+        <div class="order-summary" id="order-summary">
+          <div class="summary-line">
+            <span>Your order</span>
+            <strong id="summary-hats">0 hats</strong>
+          </div>
+          <div class="summary-line" id="summary-price-line">
+            <span>Estimated total</span>
+            <strong id="summary-price">TBD</strong>
+          </div>
+          <p class="small muted" id="summary-note">
+            You won't be charged unless we reach the minimums. Payment is collected after the window closes.
+          </p>
+        </div>
+
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block" id="submit-btn">
+          <span class="btn-text">Submit pre-order</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+
+      <div class="success card" id="success" hidden>
+        <div class="success-check" aria-hidden="true">&#10003;</div>
+        <h3>You're in.</h3>
+        <p id="success-copy"></p>
+        <div class="success-order" id="success-order"></div>
+        <div class="pay-box">
+          <h4>Payment (after the window closes)</h4>
+          <p>Don't send money yet. Once we confirm the minimums, <span class="organizer-name">Colby</span> will reach out with the final amount. Payment goes to:</p>
+          <ul class="pay-list">
+            <li><span class="pay-label">Venmo</span> <code id="pay-venmo"></code></li>
+            <li><span class="pay-label">Zelle</span> <code id="pay-zelle"></code></li>
+          </ul>
+        </div>
+        <p class="small muted">Need to change something? Email <a id="organizer-mailto" href="#"></a>.</p>
+      </div>
+
+      <div class="closed card" id="closed" hidden>
+        <h3>Ordering has closed.</h3>
+        <p>The pre-order window ended on <span id="closed-date"></span>. If you already submitted, watch your email for payment details. Questions? Email <a id="organizer-mailto-closed" href="#"></a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section-alt">
+    <div class="wrap wrap-narrow">
+      <h2>Questions</h2>
+      <dl class="faq">
+        <dt>What if a design doesn't get 6 orders?</dt>
+        <dd>It gets dropped from the order. Anyone who picked it will be offered a swap to another design, or can just skip it. No charge either way.</dd>
+        <dt>What if we don't reach 24 hats total?</dt>
+        <dd>The order doesn't go in and nobody pays anything. We'll either extend the window or call it.</dd>
+        <dt>When do I pay?</dt>
+        <dd>After the window closes and the counts are confirmed. You'll get a message with the exact amount and where to send it. The order isn't placed until everyone has paid.</dd>
+        <dt>What sizes are these?</dt>
+        <dd>One size, adjustable snapback closure on all four styles.</dd>
+        <dt>Can I order more than one?</dt>
+        <dd>Yes. Any mix of designs, up to <span id="faq-max">5</span> of each.</dd>
+        <dt>When do hats arrive?</dt>
+        <dd>Branded Bills typically takes a few weeks to produce after the order is placed. <span class="organizer-name">Colby</span> will share updates by email.</dd>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>Organized by <span class="organizer-name">Colby</span> for McCombs classmates. Not affiliated with or endorsed by The University of Texas at Austin or Branded Bills.</p>
+    <p class="small">Design renders are digital mockups from the Branded Bills design sheet and may not exactly match real colors, placement, or size.</p>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
