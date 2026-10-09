@@ -125,8 +125,11 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: 
 .status-pill.met { background: #E6F2D3; color: var(--green-dark); }
 .status-pill.short { background: #FDEBD8; color: var(--burnt-orange-dark); }
 
-.price-callout { display: inline-block; margin: 4px 0 0; padding: 8px 14px; background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--burnt-orange); border-radius: 8px; font-size: 0.95rem; }
-.price-callout strong { font-size: 1.1rem; }
+.price-callout { display: inline-block; margin: 4px 0 0; padding: 10px 14px; background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--burnt-orange); border-radius: 8px; font-size: 0.95rem; }
+.price-callout-line { margin: 0; }
+.price-callout-line + .price-callout-line { margin-top: 6px; }
+.price-callout-line > strong:first-child { font-size: 1.1rem; }
+.price-callout-markup strong { color: var(--green-dark); }
 
 /* Design cards */
 .designs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
