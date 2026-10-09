@@ -30,8 +30,8 @@ window.PREORDER_CONFIG = {
   classYears: ['2027', '2028'],
 
   payment: {
-    venmo: '@your-venmo',   // e.g. '@Colby-Hoffer'
-    zelle: 'your-zelle',    // phone number or email tied to Zelle
+    venmo: '@ColbyHoffer',
+    zelle: '214-670-2136',
   },
 
   designs: [

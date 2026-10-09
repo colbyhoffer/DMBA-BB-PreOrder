@@ -37,8 +37,8 @@ var CONFIG = {
   SEND_CONFIRMATION: true,
   ORGANIZER_NAME: 'Colby',
   REPLY_TO: '',           // e.g. your gmail; blank uses the script owner
-  VENMO: '@your-venmo',
-  ZELLE: 'your-zelle',
+  VENMO: '@ColbyHoffer',
+  ZELLE: '214-670-2136',
   PRICE_PER_HAT: null,    // number, or null if TBD
 };
 
