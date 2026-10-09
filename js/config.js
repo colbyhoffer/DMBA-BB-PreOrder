@@ -20,7 +20,9 @@ window.PREORDER_CONFIG = {
 
   // Price per hat in USD. Set to null if you don't have the number yet;
   // the site will say the price is TBD.
-  pricePerHat: null,
+  pricePerHat: 35,
+  // Shown next to the price. Leave '' to hide.
+  priceNote: 'Estimated. The final per-hat price depends on the volume tier we hit, so it could move a few dollars either way.',
 
   // Group order minimums from Branded Bills.
   minTotal: 24,

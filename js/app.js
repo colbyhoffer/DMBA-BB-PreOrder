@@ -56,6 +56,13 @@
       return '<label class="choice"><input type="radio" name="classYear" value="' + y + '"' + (i === 0 ? ' required' : '') + '><span>' + y + '</span></label>';
     }).join('');
 
+    if (C.pricePerHat != null) {
+      $('#price-callout').hidden = false;
+      $('#price-callout-amount').textContent = money(C.pricePerHat);
+      $('#price-callout-note').textContent = C.priceNote ? '(' + C.priceNote.replace(/\.$/, '') + ')' : '';
+      $('#summary-price-note').textContent = C.priceNote || '';
+    }
+
     if (DEMO) $('#demo-banner').hidden = false;
   }
 
@@ -135,7 +142,7 @@
     if (C.pricePerHat == null) {
       $('#summary-price').textContent = 'TBD';
     } else {
-      $('#summary-price').textContent = money(n * C.pricePerHat);
+      $('#summary-price').textContent = '~' + money(n * C.pricePerHat);
     }
     $('#submit-btn').disabled = n === 0 || closed;
   }
@@ -262,7 +269,7 @@
     var rows = C.designs.filter(function (d) { return qty[d.id] > 0; }).map(function (d) {
       return '<tr><td>' + d.id + ' &middot; ' + escapeHtml(d.name) + '</td><td>' + qty[d.id] + '</td></tr>';
     }).join('');
-    var totalLabel = C.pricePerHat == null ? plural(n, 'hat') + ' &middot; price TBD' : plural(n, 'hat') + ' &middot; ' + money(n * C.pricePerHat);
+    var totalLabel = C.pricePerHat == null ? plural(n, 'hat') + ' &middot; price TBD' : plural(n, 'hat') + ' &middot; est. ' + money(n * C.pricePerHat);
     $('#success-order').innerHTML = '<table><tbody>' + rows + '<tr class="total"><td>Total</td><td>' + totalLabel + '</td></tr></tbody></table>';
     s.scrollIntoView({ behavior: 'smooth', block: 'start' });
     loadCounts();

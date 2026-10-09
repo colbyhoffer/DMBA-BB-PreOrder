@@ -42,7 +42,8 @@ var CONFIG = {
   REPLY_TO: 'hoffercolby@gmail.com',
   VENMO: '@ColbyHoffer',
   ZELLE: '214-670-2136',
-  PRICE_PER_HAT: null,    // number, or null if TBD
+  PRICE_PER_HAT: 35,      // number, or null if TBD
+  PRICE_NOTE: 'This is an estimate. The final per-hat price depends on the volume tier we hit, so it could move a few dollars either way.',
 };
 
 var HEADERS = [
@@ -200,7 +201,8 @@ function sendEmails_(orderId, name, email, phone, classYear, payment, q, total, 
   }).join('\n');
   var priceLine = CONFIG.PRICE_PER_HAT == null
     ? 'Price per hat: TBD (confirmed before payment is requested)'
-    : 'Estimated total: $' + (total * CONFIG.PRICE_PER_HAT).toFixed(2) + ' (' + total + ' x $' + Number(CONFIG.PRICE_PER_HAT).toFixed(2) + ')';
+    : 'Estimated total: $' + (total * CONFIG.PRICE_PER_HAT).toFixed(2) + ' (' + total + ' x $' + Number(CONFIG.PRICE_PER_HAT).toFixed(2) + ')' +
+      (CONFIG.PRICE_NOTE ? '\n' + CONFIG.PRICE_NOTE : '');
 
   if (CONFIG.SEND_CONFIRMATION) {
     var body =
