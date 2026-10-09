@@ -7,7 +7,7 @@
 window.PREORDER_CONFIG = {
   // Google Apps Script web app URL (see README). Leave empty to run
   // the site in demo mode, which stores orders in this browser only.
-  apiUrl: '',
+  apiUrl: 'https://script.google.com/macros/s/AKfycbzhx0-dp5F3OdxhMZW0PO1xcc8BdsYnfUtlV3NoVAYjACBhSyLE3WYODsI-BndQzVtDag/exec',
 
   organizerName: 'Colby',
   organizerEmail: 'hoffercolby@gmail.com',
