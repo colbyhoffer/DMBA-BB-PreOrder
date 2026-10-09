@@ -36,7 +36,10 @@ var CONFIG = {
   // Confirmation email to the person who ordered.
   SEND_CONFIRMATION: true,
   ORGANIZER_NAME: 'Colby',
-  REPLY_TO: '',           // e.g. your gmail; blank uses the script owner
+  ORGANIZER_FULL_NAME: 'Colby Hoffer',
+  ORGANIZER_PHONE: '214-670-2136',
+  ORGANIZER_EMAIL: 'hoffercolby@gmail.com',
+  REPLY_TO: 'hoffercolby@gmail.com',
   VENMO: '@ColbyHoffer',
   ZELLE: '214-670-2136',
   PRICE_PER_HAT: null,    // number, or null if TBD
@@ -211,7 +214,10 @@ function sendEmails_(orderId, name, email, phone, classYear, payment, q, total, 
       '  2. If we hit ' + CONFIG.MIN_TOTAL + ' hats total and ' + CONFIG.MIN_PER_DESIGN + ' per design, ' + CONFIG.ORGANIZER_NAME + ' will email you the final amount.\n' +
       '  3. Pay by ' + payment + ' (Venmo ' + CONFIG.VENMO + ' / Zelle ' + CONFIG.ZELLE + '). Don\'t send anything until then.\n' +
       '  4. Once everyone has paid, the order goes to Branded Bills.\n\n' +
-      'Need to change something? Just reply to this email.\n\n' +
+      'Questions or need to change something? Reply to this email or reach me directly:\n\n' +
+      CONFIG.ORGANIZER_FULL_NAME + '\n' +
+      CONFIG.ORGANIZER_PHONE + '\n' +
+      CONFIG.ORGANIZER_EMAIL + '\n\n' +
       'Hook \'em,\n' + CONFIG.ORGANIZER_NAME;
     var opts = { name: 'McCombs Hat Pre-Order' };
     if (CONFIG.REPLY_TO) opts.replyTo = CONFIG.REPLY_TO;
