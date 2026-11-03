@@ -9,6 +9,11 @@ window.PREORDER_CONFIG = {
   // the site in demo mode, which stores orders in this browser only.
   apiUrl: 'https://script.google.com/macros/s/AKfycbzhx0-dp5F3OdxhMZW0PO1xcc8BdsYnfUtlV3NoVAYjACBhSyLE3WYODsI-BndQzVtDag/exec',
 
+  // Password gate. This is the SHA-256 hash of the password, lowercased.
+  // Regenerate with:  printf 'newpassword' | sha256sum
+  // Set to '' to remove the gate. Keep Code.gs ACCESS_CODE in sync.
+  accessCodeHash: 'ea637674efdab3bd4328ce15f307b4d588e0fa0d012650b99f910d522174c881',
+
   organizerName: 'Colby',
   organizerEmail: 'hoffercolby@gmail.com',
 

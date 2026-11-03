@@ -13,6 +13,20 @@
 </head>
 <body>
 
+<div class="gate" id="gate" hidden>
+  <form class="gate-card" id="gate-form" novalidate>
+    <img src="images/logo.png" alt="Texas McCombs" width="200" height="157">
+    <h1 class="gate-title">Classmates only</h1>
+    <p class="muted">Enter the password from the group chat to see the hat order.</p>
+    <label class="field">
+      <span class="field-label">Password</span>
+      <input type="password" name="code" id="gate-input" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+    </label>
+    <p class="form-error" id="gate-error" role="alert" hidden></p>
+    <button type="submit" class="btn btn-primary btn-lg btn-block">Let me in</button>
+  </form>
+</div>
+
 <header class="topbar">
   <div class="wrap topbar-inner">
     <div class="brand">

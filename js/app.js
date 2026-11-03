@@ -13,6 +13,8 @@
 
   var deadline = new Date(C.deadline);
   var closed = false;
+  var ACCESS_KEY = 'preorder-access';
+  var accessCode = '';
 
   // ---------- helpers ----------
   function fmtDate(d) {
@@ -31,6 +33,58 @@
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  // ---------- password gate ----------
+  function sha256(str) {
+    var data = new TextEncoder().encode(str);
+    return crypto.subtle.digest('SHA-256', data).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+        return ('0' + b.toString(16)).slice(-2);
+      }).join('');
+    });
+  }
+
+  function initGate(onUnlock) {
+    if (!C.accessCodeHash) { onUnlock(); return; }
+    var gate = $('#gate');
+    var form = $('#gate-form');
+    var input = $('#gate-input');
+    var err = $('#gate-error');
+    var saved = null;
+    try { saved = JSON.parse(sessionStorage.getItem(ACCESS_KEY) || 'null'); } catch (e) { /* ignore */ }
+    if (saved && saved.hash === C.accessCodeHash && saved.code) {
+      accessCode = saved.code;
+      onUnlock();
+      return;
+    }
+    document.body.classList.add('is-locked');
+    gate.hidden = false;
+    setTimeout(function () { input.focus(); }, 50);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      err.hidden = true;
+      var code = input.value.trim().toLowerCase();
+      if (!code) return;
+      if (!window.crypto || !crypto.subtle) {
+        err.textContent = 'This browser can\'t check the password. Try a newer browser or an https link.';
+        err.hidden = false;
+        return;
+      }
+      sha256(code).then(function (hash) {
+        if (hash === C.accessCodeHash) {
+          accessCode = code;
+          try { sessionStorage.setItem(ACCESS_KEY, JSON.stringify({ hash: hash, code: code })); } catch (e2) { /* ignore */ }
+          gate.hidden = true;
+          document.body.classList.remove('is-locked');
+          onUnlock();
+        } else {
+          err.textContent = 'That\'s not it. Check the group chat and try again.';
+          err.hidden = false;
+          input.select();
+        }
+      });
     });
   }
 
@@ -239,6 +293,7 @@
       classYear: (form.querySelector('[name="classYear"]:checked') || {}).value || '',
       payment: (form.querySelector('[name="payment"]:checked') || {}).value || '',
       notes: form.notes.value.trim(),
+      accessCode: accessCode,
       website: form.website.value, // honeypot
       qty: qty,
     };
@@ -325,6 +380,8 @@
   bindForm();
   tickCountdown();
   setInterval(tickCountdown, 1000);
-  loadCounts();
-  setInterval(loadCounts, 60000);
+  initGate(function () {
+    loadCounts();
+    setInterval(loadCounts, 60000);
+  });
 })();

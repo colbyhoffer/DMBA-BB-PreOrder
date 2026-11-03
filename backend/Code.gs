@@ -19,6 +19,9 @@ var CONFIG = {
   // Must match js/config.js. ISO string with offset. '' disables enforcement.
   DEADLINE: '2026-11-10T23:59:00-06:00',
 
+  // Must match the password behind js/config.js accessCodeHash. '' disables the check.
+  ACCESS_CODE: 'bevo',
+
   DESIGNS: ['A', 'B', 'C', 'D'],
   DESIGN_NAMES: {
     A: 'Burnt Orange / White Rope',
@@ -76,6 +79,10 @@ function doPost(e) {
 
     // Honeypot
     if (body.website) return json_({ ok: true, orderId: 'OK' });
+
+    if (CONFIG.ACCESS_CODE && String(body.accessCode || '').trim().toLowerCase() !== CONFIG.ACCESS_CODE.toLowerCase()) {
+      return json_({ ok: false, error: 'Missing or wrong password. Reload the page and enter it again.' });
+    }
 
     if (CONFIG.DEADLINE && new Date() > new Date(CONFIG.DEADLINE)) {
       return json_({ ok: false, error: 'The pre-order window has closed.' });
@@ -273,7 +280,7 @@ function setup() {
 function testPost() {
   var fake = { postData: { contents: JSON.stringify({
     name: 'Test Person', email: 'test+' + Date.now() + '@example.com', phone: '5125550123',
-    classYear: '2027', payment: 'Venmo', notes: 'test', qty: { A: 1, B: 0, C: 2, D: 0 },
+    classYear: '2027', payment: 'Venmo', notes: 'test', qty: { A: 1, B: 0, C: 2, D: 0 }, accessCode: CONFIG.ACCESS_CODE,
   }) } };
   Logger.log(doPost(fake).getContent());
   Logger.log(doGet({ parameter: { action: 'counts' } }).getContent());

@@ -6,6 +6,7 @@ A one-page pre-order site for a group hat order from Branded Bills. Static HTML/
 
 - Shows the four designs with live progress toward the minimums (24 total, 6 per design)
 - Collects name, email, phone, class year (2027/2028), payment method (Venmo/Zelle), and hat quantities
+- Sits behind a simple password (hash in `js/config.js`, checked again by the backend on every order)
 - Rejects duplicate emails, blocks submissions after the deadline, and hides a honeypot from bots
 - Writes every order to a Google Sheet you own, with a Summary tab and a "Paid?" checkbox column
 - Emails each person a confirmation with their order and the payment plan (optional)
@@ -56,6 +57,8 @@ Any static host works (Netlify, Vercel, Cloudflare Pages). Just serve the repo r
 - Once everyone has paid, place the order with Branded Bills using the Qty columns.
 
 Need to extend the deadline? Change it in both `js/config.js` and `Code.gs` (then redeploy the script).
+
+Changing the password: pick a new one, run `printf 'newpassword' | sha256sum`, put the hash in `accessCodeHash` in `js/config.js`, and put the plain password in `ACCESS_CODE` in `Code.gs` (then redeploy). Set both to `''` to remove the gate. The repo is public, so treat the password as a speed bump, not a secret.
 
 ## Local preview
 
