@@ -6,7 +6,7 @@
   var DEMO_KEY = 'preorder-demo-orders';
 
   var $ = function (sel) { return document.querySelector(sel); };
-  var $$ = function (sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); };
+  var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
 
   var qty = {};
   C.designs.forEach(function (d) { qty[d.id] = 0; });
@@ -102,10 +102,18 @@
       }).join('');
       return (
         '<div class="design-card" data-id="' + d.id + '">' +
-          '<div class="design-img"><img src="' + d.image + '" alt="Design ' + d.id + ': ' + escapeHtml(d.name) + '" loading="lazy"></div>' +
+          '<div class="design-img">' +
+            '<img class="design-img-front" src="' + d.image + '" alt="Design ' + d.id + ': ' + escapeHtml(d.name) + ', front" loading="lazy">' +
+            (d.sideImage ? '<img class="design-img-side" src="' + d.sideImage + '" alt="Design ' + d.id + ': ' + escapeHtml(d.name) + ', side" loading="lazy" hidden>' : '') +
+          '</div>' +
+          (d.sideImage ?
+            '<div class="view-toggle" role="group" aria-label="View">' +
+              '<button type="button" class="view-btn is-active" data-view="front">Front</button>' +
+              '<button type="button" class="view-btn" data-view="side">Side</button>' +
+            '</div>' : '') +
           '<div class="design-head"><span class="design-letter">' + d.id + '</span><span class="design-name">' + escapeHtml(d.name) + '</span><span class="swatches">' + swatches + '</span></div>' +
           '<p class="design-style">' + escapeHtml(d.style) + '</p>' +
-          '<p class="design-colorway">' + escapeHtml(d.colorway) + '</p>' +
+          '<p class="design-colorway">' + escapeHtml(d.colorway) + (d.sidePatch ? '<br><span class="design-side">Side: ' + escapeHtml(d.sidePatch) + '</span>' : '') + '</p>' +
           '<div class="qty" role="group" aria-label="Quantity for design ' + d.id + '">' +
             '<button type="button" data-dir="-1" aria-label="Remove one">&minus;</button>' +
             '<span class="qty-value" aria-live="polite">0</span>' +
@@ -116,6 +124,15 @@
     }).join('');
 
     wrap.addEventListener('click', function (e) {
+      var view = e.target.closest('button[data-view]');
+      if (view) {
+        var c = view.closest('.design-card');
+        var side = view.getAttribute('data-view') === 'side';
+        c.querySelector('.design-img-front').hidden = side;
+        c.querySelector('.design-img-side').hidden = !side;
+        $$('.view-btn', c).forEach(function (b) { b.classList.toggle('is-active', b === view); });
+        return;
+      }
       var btn = e.target.closest('button[data-dir]');
       if (!btn || closed) return;
       var card = btn.closest('.design-card');

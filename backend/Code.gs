@@ -17,7 +17,7 @@ var CONFIG = {
   SUMMARY_SHEET_NAME: 'Summary',
 
   // Must match js/config.js. ISO string with offset. '' disables enforcement.
-  DEADLINE: '2026-10-16T23:59:00-05:00',
+  DEADLINE: '2026-11-10T23:59:00-06:00',
 
   DESIGNS: ['A', 'B', 'C', 'D'],
   DESIGN_NAMES: {

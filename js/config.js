@@ -13,8 +13,8 @@ window.PREORDER_CONFIG = {
   organizerEmail: 'hoffercolby@gmail.com',
 
   // Order window closes at this time. Use an ISO string with offset.
-  // Central Time is -05:00 during daylight time, -06:00 in winter.
-  deadline: '2026-10-16T23:59:00-05:00',
+  // Central Time is -05:00 during daylight time, -06:00 after the first Sunday in November.
+  deadline: '2026-11-10T23:59:00-06:00',
   // Time zone used when showing the deadline to visitors.
   displayTimeZone: 'America/Chicago',
 
@@ -43,6 +43,8 @@ window.PREORDER_CONFIG = {
       style: '#545-05R Curved 5-Panel Rope',
       colorway: 'Burnt orange crown and bill, white rope',
       image: 'images/design-a.png',
+      sideImage: 'images/side-a.png',
+      sidePatch: 'F2 all-white Longhorn',
       swatch: ['#BF5700', '#FFFFFF'],
     },
     {
@@ -51,6 +53,8 @@ window.PREORDER_CONFIG = {
       style: '#545-05R Curved 5-Panel Rope',
       colorway: 'Black crown and bill, burnt orange rope',
       image: 'images/design-b.png',
+      sideImage: 'images/side-b.png',
+      sidePatch: 'F1 burnt orange Longhorn',
       swatch: ['#1A1A1A', '#BF5700'],
     },
     {
@@ -59,6 +63,8 @@ window.PREORDER_CONFIG = {
       style: '#545-05R Curved 5-Panel Rope',
       colorway: 'White crown and bill, burnt orange rope',
       image: 'images/design-c.png',
+      sideImage: 'images/side-c.png',
+      sidePatch: 'F1 burnt orange Longhorn',
       swatch: ['#FFFFFF', '#BF5700'],
     },
     {
@@ -67,6 +73,8 @@ window.PREORDER_CONFIG = {
       style: '#500-00X Curved Performance',
       colorway: 'Burnt orange, no rope, moisture-wicking',
       image: 'images/design-d.png',
+      sideImage: 'images/side-d.png',
+      sidePatch: 'F2 all-white Longhorn',
       swatch: ['#BF5700'],
     },
   ],
@@ -74,5 +82,7 @@ window.PREORDER_CONFIG = {
   patch: {
     type: '3D PVC rubber patch',
     size: '2.8 in x 2.17 in',
+    sideType: '3D PVC rubber Longhorn side patch',
+    sideSize: '2.39 in x 1.25 in',
   },
 };
