@@ -7,7 +7,7 @@
 window.PREORDER_CONFIG = {
   // Google Apps Script web app URL (see README). Leave empty to run
   // the site in demo mode, which stores orders in this browser only.
-  apiUrl: 'https://script.google.com/macros/s/AKfycbxzi9CPRMnSq78eU2Bg8G8c64glFTEVy6dcBs85LoKFehsEeAeyh3Od9FMLxG0Oug9OFQ/exec',
+  apiUrl: 'https://script.google.com/macros/s/AKfycbz79gj9sJzzcbspy2yG4Ws9YE_UbCAcA5jdWpDeJ2vIeLR1ec0L952WETs8DYmfw3LB2w/exec',
 
   // Password gate. This is the SHA-256 hash of the password, lowercased.
   // Regenerate with:  printf 'newpassword' | sha256sum
