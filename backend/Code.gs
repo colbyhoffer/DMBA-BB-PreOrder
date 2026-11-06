@@ -14,7 +14,7 @@
 
 // Bump this whenever you redeploy. The site's counts endpoint echoes it so
 // you can confirm which version is live: open the /exec URL with ?action=counts
-var SCRIPT_VERSION = '2026-11-06b';
+var SCRIPT_VERSION = '2026-11-06c';
 
 var CONFIG = {
   SHEET_NAME: 'Orders',
@@ -47,6 +47,7 @@ var CONFIG = {
   ORGANIZER_PHONE: '214-670-2136',
   ORGANIZER_EMAIL: 'hoffercolby@gmail.com',
   REPLY_TO: 'hoffercolby@gmail.com',
+  CONFIRMATION_CC: 'hoffercolby@gmail.com',   // copy the organizer on every confirmation. '' to turn off.
   VENMO: '@ColbyHoffer',
   ZELLE: '214-670-2136',
   // Pricing. Keep in sync with js/config.js `pricing`.
@@ -259,6 +260,7 @@ function sendEmails_(orderId, name, email, phone, classYear, payment, q, total, 
       'Hook \'em,\n' + CONFIG.ORGANIZER_NAME;
     var opts = { name: 'McCombs Hat Pre-Order' };
     if (CONFIG.REPLY_TO) opts.replyTo = CONFIG.REPLY_TO;
+    if (CONFIG.CONFIRMATION_CC) opts.cc = CONFIG.CONFIRMATION_CC;
     MailApp.sendEmail(email, 'Hat pre-order confirmed (' + orderId + ')', body, opts);
   }
 
