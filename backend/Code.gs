@@ -12,6 +12,10 @@
  *      Who has access: Anyone. Copy the web app URL into js/config.js.
  */
 
+// Bump this whenever you redeploy. The site's counts endpoint echoes it so
+// you can confirm which version is live: open the /exec URL with ?action=counts
+var SCRIPT_VERSION = '2026-11-06a';
+
 var CONFIG = {
   SHEET_NAME: 'Orders',
   SUMMARY_SHEET_NAME: 'Summary',
@@ -172,6 +176,9 @@ function getCounts_() {
     byDesign: by,
     minTotal: CONFIG.MIN_TOTAL,
     minPerDesign: CONFIG.MIN_PER_DESIGN,
+    deadline: CONFIG.DEADLINE,
+    open: !CONFIG.DEADLINE || new Date() <= new Date(CONFIG.DEADLINE),
+    version: SCRIPT_VERSION,
   };
 }
 
