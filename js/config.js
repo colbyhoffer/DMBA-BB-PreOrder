@@ -46,7 +46,8 @@ window.PREORDER_CONFIG = {
   // Group order minimums from Branded Bills.
   minTotal: 24,
   minPerDesign: 6,
-  maxPerDesignPerPerson: 5,
+  // Sanity ceiling on the quantity stepper, not a real limit. Keep Code.gs MAX_PER_DESIGN in sync.
+  maxPerDesignPerPerson: 99,
 
   classYears: ['2027', '2028'],
 

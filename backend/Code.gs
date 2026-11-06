@@ -33,7 +33,7 @@ var CONFIG = {
     C: 'White / Burnt Orange Rope',
     D: 'Burnt Orange Performance',
   },
-  MAX_PER_DESIGN: 5,
+  MAX_PER_DESIGN: 99,   // sanity ceiling, matches js/config.js maxPerDesignPerPerson
   MIN_TOTAL: 24,
   MIN_PER_DESIGN: 6,
 

@@ -96,7 +96,6 @@
     $('#min-total-copy').textContent = C.minTotal;
     $('#min-design-copy').textContent = C.minPerDesign;
     $('#total-min').textContent = C.minTotal;
-    $('#faq-max').textContent = C.maxPerDesignPerPerson;
     $('#patch-type').textContent = C.patch.type;
     $('#patch-size').textContent = C.patch.size;
     $('#pay-venmo').textContent = C.payment.venmo;
