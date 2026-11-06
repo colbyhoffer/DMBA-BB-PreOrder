@@ -15,6 +15,8 @@
   var closed = false;
   var ACCESS_KEY = 'preorder-access';
   var accessCode = '';
+  var liveTotal = 0;          // hats ordered so far, from the backend
+  var estQtyTouched = false;  // user typed their own number into the estimator
 
   // ---------- helpers ----------
   function fmtDate(d) {
@@ -110,14 +112,122 @@
       return '<label class="choice"><input type="radio" name="classYear" value="' + y + '"' + (i === 0 ? ' required' : '') + '><span>' + y + '</span></label>';
     }).join('');
 
-    if (C.pricePerHat != null) {
-      $('#price-callout').hidden = false;
-      $('#price-callout-amount').textContent = money(C.pricePerHat);
-      $('#price-callout-note').textContent = C.priceNote ? '(' + C.priceNote.replace(/\.$/, '') + ')' : '';
-      $('#summary-price-note').textContent = C.priceNote || '';
+    if (DEMO) $('#demo-banner').hidden = false;
+  }
+
+  // ---------- pricing ----------
+  var P = C.pricing;
+
+  function tierFor(n) {
+    var tier = P.tiers[0];
+    for (var i = 0; i < P.tiers.length; i++) {
+      if (n >= P.tiers[i].min) tier = P.tiers[i];
+    }
+    return tier;
+  }
+
+  function tierAfter(tier) {
+    var i = P.tiers.indexOf(tier);
+    return i >= 0 && i < P.tiers.length - 1 ? P.tiers[i + 1] : null;
+  }
+
+  function tierLabel(t) {
+    return t.max ? t.min + '\u2013' + t.max : t.min + '+';
+  }
+
+  // Full per-hat estimate for an order of n hats.
+  function estimate(n) {
+    n = Math.max(C.minTotal, Math.floor(n) || 0);
+    var tier = tierFor(n);
+    var ship = P.shippingTotal / n;
+    var taxable = tier.base + P.sidePatch + ship;
+    var tax = taxable * P.taxRate;
+    return {
+      n: n, tier: tier, base: tier.base, side: P.sidePatch, ship: ship, tax: tax,
+      perHat: taxable + tax,
+    };
+  }
+
+  // The order size the estimate should assume: what's in so far plus this visitor's picks.
+  function projectedTotal() {
+    return Math.max(C.minTotal, liveTotal + totalHats());
+  }
+
+  function currentEstimateQty() {
+    var input = $('#est-qty');
+    if (estQtyTouched) {
+      var v = parseInt(input.value, 10);
+      if (v >= C.minTotal) return v;
+    }
+    return projectedTotal();
+  }
+
+  function renderEstimator() {
+    var n = currentEstimateQty();
+    var e = estimate(n);
+    var input = $('#est-qty');
+    if (!estQtyTouched) input.value = n;
+    $('#est-reset').hidden = !estQtyTouched;
+
+    $('#est-per-hat').textContent = money(e.perHat);
+
+    var mine = totalHats();
+    var basis;
+    if (estQtyTouched) {
+      basis = 'What-if at ' + plural(n, 'hat') + '. Live count is ' + plural(liveTotal, 'hat') + ' so far.';
+    } else if (liveTotal + mine < C.minTotal) {
+      basis = plural(liveTotal, 'hat') + ' ordered so far' + (mine ? ' plus your ' + mine : '') + '. Assuming we reach the ' + C.minTotal + '-hat minimum.';
+    } else if (mine) {
+      basis = plural(liveTotal, 'hat') + ' ordered so far plus your ' + mine + ' = ' + plural(liveTotal + mine, 'hat') + '.';
+    } else {
+      basis = plural(liveTotal, 'hat') + ' ordered so far.';
+    }
+    $('#est-basis').textContent = basis;
+
+    $('#est-rows').innerHTML =
+      '<tr><td>Base hat<span class="small muted">' + escapeHtml(P.collection) + ', ' + tierLabel(e.tier) + ' tier</span></td><td>' + money(e.base) + '</td></tr>' +
+      '<tr><td>Longhorn side patch<span class="small muted">3D PVC add-on</span></td><td>+ ' + money(e.side) + '</td></tr>' +
+      '<tr><td>Shipping share<span class="small muted">est. ' + money(P.shippingTotal) + ' split across ' + n + '</span></td><td>+ ' + money(e.ship) + '</td></tr>' +
+      '<tr><td>Sales tax<span class="small muted">' + (P.taxRate * 100).toFixed(2).replace(/\.?0+$/, '') + '%</span></td><td>+ ' + money(e.tax) + '</td></tr>' +
+      '<tr class="total"><td>Per hat</td><td>' + money(e.perHat) + '</td></tr>';
+
+    $('#est-tiers').innerHTML = P.tiers.map(function (t) {
+      var cls = t === e.tier ? ' is-active' : (t.min < e.tier.min ? ' is-below' : '');
+      return '<div class="tier' + cls + '"><span class="tier-range">' + tierLabel(t) + '</span><span class="tier-price">' + money(t.base) + '</span></div>';
+    }).join('');
+
+    var next = tierAfter(e.tier);
+    if (next) {
+      var gap = next.min - n;
+      var atNext = estimate(next.min);
+      $('#est-next').textContent = plural(gap, 'more hat') + ' would reach the ' + tierLabel(next) + ' tier and bring it to about ' + money(atNext.perHat) + ' per hat.';
+    } else {
+      $('#est-next').textContent = 'That\'s the best tier on the sheet.';
     }
 
-    if (DEMO) $('#demo-banner').hidden = false;
+    $('#est-foot').textContent = 'Base prices from the Branded Bills custom pricing sheet (' + P.sheetVersion + '), 3D PVC decoration. Tax and shipping are estimates. The final per-hat amount is confirmed before anyone pays.';
+  }
+
+  function bindEstimator() {
+    var input = $('#est-qty');
+    input.min = C.minTotal;
+    input.addEventListener('input', function () {
+      var v = parseInt(input.value, 10);
+      estQtyTouched = !isNaN(v);
+      renderEstimator();
+      updateSummary();
+    });
+    input.addEventListener('blur', function () {
+      var v = parseInt(input.value, 10);
+      if (isNaN(v) || v < C.minTotal) { estQtyTouched = false; }
+      renderEstimator();
+      updateSummary();
+    });
+    $('#est-reset').addEventListener('click', function () {
+      estQtyTouched = false;
+      renderEstimator();
+      updateSummary();
+    });
   }
 
   // ---------- countdown ----------
@@ -210,17 +320,19 @@
   function updateSummary() {
     var n = totalHats();
     $('#summary-hats').textContent = plural(n, 'hat');
-    if (C.pricePerHat == null) {
-      $('#summary-price').textContent = 'TBD';
-    } else {
-      $('#summary-price').textContent = '~' + money(n * C.pricePerHat);
-    }
+    var e = estimate(currentEstimateQty());
+    $('#summary-price').textContent = '~' + money(n * e.perHat);
+    $('#summary-price-detail').textContent = n > 0 ? '(' + n + ' x ' + money(e.perHat) + ')' : '';
     $('#submit-btn').disabled = n === 0 || closed;
+    if (document.body.contains($('#est-rows')) && !estQtyTouched) renderEstimator();
   }
 
   // ---------- progress ----------
   function renderProgress(counts) {
     var total = counts.totalHats || 0;
+    liveTotal = total;
+    renderEstimator();
+    updateSummary();
     var pct = Math.min(100, (total / C.minTotal) * 100);
     $('#total-count').textContent = total;
     $('#total-fill').style.width = pct + '%';
@@ -341,7 +453,8 @@
     var rows = C.designs.filter(function (d) { return qty[d.id] > 0; }).map(function (d) {
       return '<tr><td>' + d.id + ' &middot; ' + escapeHtml(d.name) + '</td><td>' + qty[d.id] + '</td></tr>';
     }).join('');
-    var totalLabel = C.pricePerHat == null ? plural(n, 'hat') + ' &middot; price TBD' : plural(n, 'hat') + ' &middot; est. ' + money(n * C.pricePerHat);
+    var e = estimate(Math.max(C.minTotal, liveTotal + n));
+    var totalLabel = plural(n, 'hat') + ' &middot; est. ' + money(n * e.perHat) + ' <span class="small muted">(' + money(e.perHat) + ' each at the ' + tierLabel(e.tier) + ' tier)</span>';
     $('#success-order').innerHTML = '<table><tbody>' + rows + '<tr class="total"><td>Total</td><td>' + totalLabel + '</td></tr></tbody></table>';
     s.scrollIntoView({ behavior: 'smooth', block: 'start' });
     loadCounts();
@@ -378,6 +491,8 @@
   renderDesigns();
   updateSummary();
   bindForm();
+  bindEstimator();
+  renderEstimator();
   tickCountdown();
   setInterval(tickCountdown, 1000);
   initGate(function () {

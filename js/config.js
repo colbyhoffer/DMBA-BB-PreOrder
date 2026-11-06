@@ -23,11 +23,25 @@ window.PREORDER_CONFIG = {
   // Time zone used when showing the deadline to visitors.
   displayTimeZone: 'America/Chicago',
 
-  // Price per hat in USD. Set to null if you don't have the number yet;
-  // the site will say the price is TBD.
-  pricePerHat: 35,
-  // Shown next to the price. Leave '' to hide.
-  priceNote: 'Estimated. The final per-hat price depends on the volume tier we hit, so it could move a few dollars either way.',
+  // Pricing, from the Branded Bills custom pricing sheet (260901).
+  // Both hat styles (#545-05R, #500-00X) are in the Signature Collection.
+  // The estimator picks the tier from the live order count, adds the
+  // side patch, then tax and a shipping share. Keep Code.gs PRICING in sync.
+  pricing: {
+    collection: 'Signature Collection',
+    tiers: [
+      { min: 24, max: 49, base: 28.00 },
+      { min: 50, max: 99, base: 26.00 },
+      { min: 100, max: 249, base: 24.50 },
+      { min: 250, max: 599, base: 23.00 },
+      { min: 600, max: 999, base: 21.50 },
+      { min: 1000, max: null, base: 21.00 },
+    ],
+    sidePatch: 6.00,        // "Side PVC or Silicone" add-on, per hat
+    taxRate: 0.0825,        // Austin sales tax. Applied to hats + shipping.
+    shippingTotal: 30.00,   // PLACEHOLDER: estimated shipping for the whole order, split across hats
+    sheetVersion: '260901',
+  },
 
   // Group order minimums from Branded Bills.
   minTotal: 24,

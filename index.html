@@ -125,10 +125,38 @@
           <figure class="patch-fig"><img src="images/patch-f1.png" alt="Burnt orange Longhorn side patch" width="369" height="205"><figcaption>Side patch on the black and white hats</figcaption></figure>
           <figure class="patch-fig"><img src="images/patch-f2.png" alt="All-white Longhorn side patch" width="369" height="207"><figcaption>Side patch on the burnt orange hats. Lines show molded detail; the patch is all white.</figcaption></figure>
         </div>
-        <div class="price-callout" id="price-callout" hidden>
-          <p class="price-callout-line"><strong id="price-callout-amount"></strong> per hat <span class="muted" id="price-callout-note"></span></p>
-          <p class="price-callout-line price-callout-markup"><strong>Zero profit markup!</strong> You're only covering production, brand fees, shipping and taxes.</p>
+      </div>
+
+      <div class="estimator card" id="estimator">
+        <div class="estimator-head">
+          <div class="estimator-main">
+            <p class="eyebrow">Price estimator</p>
+            <p class="estimator-big"><strong id="est-per-hat">&hellip;</strong> <span>per hat, all in</span></p>
+            <p class="small muted" id="est-basis">Loading current totals&hellip;</p>
+          </div>
+          <div class="estimator-input">
+            <label class="field-label" for="est-qty">Estimate at</label>
+            <div class="estimator-qty">
+              <input type="number" id="est-qty" min="24" max="5000" step="1" inputmode="numeric">
+              <span>hats</span>
+            </div>
+            <button type="button" class="link-btn" id="est-reset" hidden>Back to live count</button>
+          </div>
         </div>
+
+        <div class="estimator-body">
+          <table class="est-table" aria-label="Per-hat cost breakdown">
+            <tbody id="est-rows"></tbody>
+          </table>
+          <div class="est-tiers-wrap">
+            <p class="field-label">Volume tiers (base hat price)</p>
+            <div class="tiers" id="est-tiers"></div>
+            <p class="small muted" id="est-next"></p>
+          </div>
+        </div>
+
+        <p class="price-callout-markup"><strong>Zero profit markup!</strong> You're only covering production, brand fees, shipping and taxes.</p>
+        <p class="small muted est-foot" id="est-foot"></p>
       </div>
 
       <div class="designs" id="designs"></div>
@@ -177,12 +205,12 @@
             <strong id="summary-hats">0 hats</strong>
           </div>
           <div class="summary-line" id="summary-price-line">
-            <span>Estimated total</span>
-            <strong id="summary-price">TBD</strong>
+            <span>Estimated total <span class="muted small" id="summary-price-detail"></span></span>
+            <strong id="summary-price">&hellip;</strong>
           </div>
           <p class="small muted" id="summary-note">
             You won't be charged unless we reach the minimums. Payment is collected after the window closes.
-            <span id="summary-price-note"></span>
+            The estimate uses the current volume tier plus tax and shipping; the final amount is confirmed before anyone pays.
           </p>
         </div>
 
@@ -226,6 +254,8 @@
         <dd>It gets dropped from the order. Anyone who picked it will be offered a swap to another design, or can just skip it. No charge either way.</dd>
         <dt>What if we don't reach 24 hats total?</dt>
         <dd>The order doesn't go in and nobody pays anything. We'll either extend the window or call it.</dd>
+        <dt>How is the price calculated?</dt>
+        <dd>Straight from the Branded Bills pricing sheet. The base hat price drops as the group order gets bigger (volume tiers), the Longhorn side patch is a flat add-on per hat, and then sales tax and a share of shipping go on top. The estimator above the designs shows the math for the current order size. Nobody is making money on this.</dd>
         <dt>When do I pay?</dt>
         <dd>After the window closes and the counts are confirmed. You'll get a message with the exact amount and where to send it. The order isn't placed until everyone has paid.</dd>
         <dt>What sizes are these?</dt>

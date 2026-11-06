@@ -137,11 +137,36 @@ body.is-locked > main, body.is-locked > header, body.is-locked > footer { visibi
 .status-pill.met { background: #E6F2D3; color: var(--green-dark); }
 .status-pill.short { background: #FDEBD8; color: var(--burnt-orange-dark); }
 
-.price-callout { display: inline-block; margin: 4px 0 0; padding: 10px 14px; background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--burnt-orange); border-radius: 8px; font-size: 0.95rem; }
-.price-callout-line { margin: 0; }
-.price-callout-line + .price-callout-line { margin-top: 6px; }
-.price-callout-line > strong:first-child { font-size: 1.1rem; }
+/* Price estimator */
+.estimator { margin-bottom: 28px; border-left: 4px solid var(--burnt-orange); }
+.estimator-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
+.estimator-head .eyebrow { margin-bottom: 4px; }
+.estimator-big { margin: 0; font-size: 1rem; color: var(--charcoal-light); }
+.estimator-big strong { font-size: 2rem; color: var(--charcoal); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.estimator-main .small { margin: 2px 0 0; }
+.estimator-input { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.estimator-qty { display: flex; align-items: center; gap: 8px; }
+.estimator-qty input { font: inherit; font-weight: 700; width: 92px; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; text-align: right; font-variant-numeric: tabular-nums; }
+.estimator-qty input:focus { outline: none; border-color: var(--burnt-orange); box-shadow: 0 0 0 3px rgba(191, 87, 0, 0.15); }
+.link-btn { font: inherit; font-size: 0.8rem; font-weight: 600; color: var(--burnt-orange); background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
+.estimator-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+.est-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.est-table td { padding: 8px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+.est-table td:last-child { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.est-table td .small { display: block; margin: 0; }
+.est-table tr.total td { border-bottom: none; font-weight: 800; font-size: 1.05rem; padding-top: 10px; }
+.est-tiers-wrap .field-label { display: block; margin-bottom: 8px; }
+.tiers { display: flex; flex-wrap: wrap; gap: 6px; }
+.tier { display: flex; flex-direction: column; align-items: center; padding: 6px 10px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--white); min-width: 74px; }
+.tier-range { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+.tier-price { font-weight: 800; font-variant-numeric: tabular-nums; }
+.tier.is-active { border-color: var(--burnt-orange); background: #FDEBD8; }
+.tier.is-active .tier-range { color: var(--burnt-orange-dark); }
+.tier.is-below { opacity: 0.55; }
+#est-next { margin: 10px 0 0; }
+.price-callout-markup { margin: 18px 0 4px; }
 .price-callout-markup strong { color: var(--green-dark); }
+.est-foot { margin: 0; }
 
 /* Design cards */
 .designs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
@@ -226,6 +251,8 @@ body.is-locked > main, body.is-locked > header, body.is-locked > footer { visibi
   .hero-art { order: -1; }
   .hero-art img { max-width: 260px; }
   .field-grid { grid-template-columns: 1fr; }
+  .estimator-body { grid-template-columns: 1fr; }
+  .estimator-input { align-items: flex-start; }
   .section { padding: 40px 0; }
   .card { padding: 18px; }
 }

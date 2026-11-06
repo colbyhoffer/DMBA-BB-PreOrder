@@ -45,8 +45,16 @@ var CONFIG = {
   REPLY_TO: 'hoffercolby@gmail.com',
   VENMO: '@ColbyHoffer',
   ZELLE: '214-670-2136',
-  PRICE_PER_HAT: 35,      // number, or null if TBD
-  PRICE_NOTE: 'This is an estimate. The final per-hat price depends on the volume tier we hit, so it could move a few dollars either way.',
+  // Pricing. Keep in sync with js/config.js `pricing`.
+  PRICING: {
+    TIERS: [
+      { min: 24, base: 28.00 }, { min: 50, base: 26.00 }, { min: 100, base: 24.50 },
+      { min: 250, base: 23.00 }, { min: 600, base: 21.50 }, { min: 1000, base: 21.00 },
+    ],
+    SIDE_PATCH: 6.00,
+    TAX_RATE: 0.0825,
+    SHIPPING_TOTAL: 30.00,
+  },
 };
 
 var HEADERS = [
@@ -198,6 +206,16 @@ function clean_(v, max) {
   return String(v == null ? '' : v).replace(/[\r\n\t]/g, ' ').trim().slice(0, max);
 }
 
+/** Per-hat estimate for an order of n hats, same math as the site. */
+function estimatePerHat_(n) {
+  n = Math.max(CONFIG.MIN_TOTAL, n || 0);
+  var tier = CONFIG.PRICING.TIERS[0];
+  CONFIG.PRICING.TIERS.forEach(function (t) { if (n >= t.min) tier = t; });
+  var ship = CONFIG.PRICING.SHIPPING_TOTAL / n;
+  var taxable = tier.base + CONFIG.PRICING.SIDE_PATCH + ship;
+  return { perHat: taxable * (1 + CONFIG.PRICING.TAX_RATE), tierMin: tier.min, base: tier.base, n: n };
+}
+
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
@@ -206,10 +224,12 @@ function sendEmails_(orderId, name, email, phone, classYear, payment, q, total, 
   var lines = CONFIG.DESIGNS.filter(function (id) { return q[id] > 0; }).map(function (id) {
     return '  ' + id + '. ' + CONFIG.DESIGN_NAMES[id] + ' x ' + q[id];
   }).join('\n');
-  var priceLine = CONFIG.PRICE_PER_HAT == null
-    ? 'Price per hat: TBD (confirmed before payment is requested)'
-    : 'Estimated total: $' + (total * CONFIG.PRICE_PER_HAT).toFixed(2) + ' (' + total + ' x $' + Number(CONFIG.PRICE_PER_HAT).toFixed(2) + ')' +
-      (CONFIG.PRICE_NOTE ? '\n' + CONFIG.PRICE_NOTE : '');
+  var groupTotal = getCounts_().totalHats; // includes this order, it was just appended
+  var est = estimatePerHat_(groupTotal);
+  var priceLine =
+    'Estimated total: $' + (total * est.perHat).toFixed(2) + ' (' + total + ' x $' + est.perHat.toFixed(2) + ' per hat)\n' +
+    'That assumes ' + est.n + ' hats in the group order ($' + est.base.toFixed(2) + ' base at the ' + est.tierMin + '+ tier, plus the side patch, ' +
+    'est. shipping and sales tax). The per-hat price drops if more people order. The final amount is confirmed before you pay.';
 
   if (CONFIG.SEND_CONFIRMATION) {
     var body =

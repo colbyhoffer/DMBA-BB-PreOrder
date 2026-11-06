@@ -34,7 +34,7 @@ Open [`js/config.js`](js/config.js) and set:
 
 - `apiUrl`: the `/exec` URL from step 5
 - `deadline`: ISO timestamp with timezone offset (Central is `-05:00` during daylight time)
-- `pricePerHat`: number or `null`
+- `pricing`: tiers from the Branded Bills sheet are filled in. Update `shippingTotal` once you have a real shipping quote, and `taxRate` if needed
 - `payment.venmo` and `payment.zelle`
 - `organizerEmail` if it's not already right
 
