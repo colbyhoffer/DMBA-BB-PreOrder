@@ -96,8 +96,6 @@
     $('#min-total-copy').textContent = C.minTotal;
     $('#min-design-copy').textContent = C.minPerDesign;
     $('#total-min').textContent = C.minTotal;
-    $('#patch-type').textContent = C.patch.type;
-    $('#patch-size').textContent = C.patch.size;
     $('#pay-venmo').textContent = C.payment.venmo;
     $('#pay-zelle').textContent = C.payment.zelle;
     ['#organizer-mailto', '#organizer-mailto-closed'].forEach(function (s) {
@@ -184,8 +182,8 @@
     $('#est-basis').textContent = basis;
 
     $('#est-rows').innerHTML =
-      '<tr><td>Base hat<span class="small muted">' + escapeHtml(P.collection) + ', ' + tierLabel(e.tier) + ' tier</span></td><td>' + money(e.base) + '</td></tr>' +
-      '<tr><td>Longhorn side patch<span class="small muted">3D PVC add-on</span></td><td>+ ' + money(e.side) + '</td></tr>' +
+      '<tr><td>Hat<span class="small muted">' + 'order of ' + tierLabel(e.tier) + ' hats</span></td><td>' + money(e.base) + '</td></tr>' +
+      '<tr><td>Longhorn side patch<span class="small muted">flat add-on per hat</span></td><td>+ ' + money(e.side) + '</td></tr>' +
       '<tr><td>Shipping share<span class="small muted">est. ' + money(P.shippingTotal) + ' split across ' + n + '</span></td><td>+ ' + money(e.ship) + '</td></tr>' +
       '<tr><td>Sales tax<span class="small muted">' + (P.taxRate * 100).toFixed(2).replace(/\.?0+$/, '') + '%</span></td><td>+ ' + money(e.tax) + '</td></tr>' +
       '<tr class="total"><td>Per hat</td><td>' + money(e.perHat) + '</td></tr>';
@@ -204,7 +202,7 @@
       $('#est-next').textContent = 'That\'s the best tier on the sheet.';
     }
 
-    $('#est-foot').textContent = 'Base prices from the Branded Bills custom pricing sheet (' + P.sheetVersion + '), 3D PVC decoration. Tax and shipping are estimates. The final per-hat amount is confirmed before anyone pays.';
+    $('#est-foot').textContent = 'Hat and patch prices are from the Branded Bills pricing sheet. Tax and shipping are estimates. The final per-hat amount is confirmed before anyone pays.';
   }
 
   function bindEstimator() {
