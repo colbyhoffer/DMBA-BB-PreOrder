@@ -242,7 +242,8 @@ function sendEmails_(orderId, name, email, phone, classYear, payment, q, total, 
       '  1. Ordering closes ' + (CONFIG.DEADLINE ? new Date(CONFIG.DEADLINE).toLocaleString('en-US', { timeZone: 'America/Chicago' }) + ' CT' : 'soon') + '.\n' +
       '  2. If we hit ' + CONFIG.MIN_TOTAL + ' hats total and ' + CONFIG.MIN_PER_DESIGN + ' per design, ' + CONFIG.ORGANIZER_NAME + ' will email you the final amount.\n' +
       '  3. Pay by ' + payment + ' (Venmo ' + CONFIG.VENMO + ' / Zelle ' + CONFIG.ZELLE + '). Don\'t send anything until then.\n' +
-      '  4. Once everyone has paid, the order goes to Branded Bills.\n\n' +
+      '  4. Once everyone has paid, the order goes to Branded Bills.\n' +
+      '  5. Hats ship to the Centrum for student pickup. I\'ll email when they\'re in.\n\n' +
       'Questions or need to change something? Reply to this email or reach me directly:\n\n' +
       CONFIG.ORGANIZER_FULL_NAME + '\n' +
       CONFIG.ORGANIZER_PHONE + '\n' +
