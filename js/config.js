@@ -19,7 +19,7 @@ window.PREORDER_CONFIG = {
 
   // Order window closes at this time. Use an ISO string with offset.
   // Central Time is -05:00 during daylight time, -06:00 after the first Sunday in November.
-  deadline: '2026-11-10T23:59:00-06:00',
+  deadline: '2026-11-13T23:59:00-06:00',
   // Time zone used when showing the deadline to visitors.
   displayTimeZone: 'America/Chicago',
 
