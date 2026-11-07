@@ -14,7 +14,7 @@
 
 // Bump this whenever you redeploy. The site's counts endpoint echoes it so
 // you can confirm which version is live: open the /exec URL with ?action=counts
-var SCRIPT_VERSION = '2026-11-06c';
+var SCRIPT_VERSION = '2026-11-07a';
 
 var CONFIG = {
   SHEET_NAME: 'Orders',
@@ -25,6 +25,8 @@ var CONFIG = {
 
   // Must match the password behind js/config.js accessCodeHash. '' disables the check.
   ACCESS_CODE: 'bevo',
+
+  LOCATIONS: ['DAL', 'AUS', 'HOU'],   // '' in the list is not allowed; [] disables the check
 
   DESIGNS: ['A', 'B', 'C', 'D'],
   DESIGN_NAMES: {
@@ -65,6 +67,7 @@ var CONFIG = {
 var HEADERS = [
   'Order ID', 'Timestamp', 'Name', 'Email', 'Phone', 'Class Year', 'Payment Method',
   'Qty A', 'Qty B', 'Qty C', 'Qty D', 'Total Hats', 'Notes', 'Paid?', 'Amount Paid',
+  'Location',
 ];
 
 // ---------------------------------------------------------------- endpoints
@@ -105,6 +108,7 @@ function doPost(e) {
     var email = clean_(body.email, 120).toLowerCase();
     var phone = clean_(body.phone, 30);
     var classYear = clean_(body.classYear, 10);
+    var location = clean_(body.location, 10).toUpperCase();
     var payment = clean_(body.payment, 20);
     var notes = clean_(body.notes, 200);
 
@@ -112,6 +116,7 @@ function doPost(e) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json_({ ok: false, error: 'Valid email is required.' });
     if (phone.replace(/\D/g, '').length < 10) return json_({ ok: false, error: 'Phone number is required.' });
     if (!classYear) return json_({ ok: false, error: 'Class year is required.' });
+    if (CONFIG.LOCATIONS.length && CONFIG.LOCATIONS.indexOf(location) < 0) return json_({ ok: false, error: 'Campus is required.' });
     if (!payment) return json_({ ok: false, error: 'Payment method is required.' });
 
     var q = {};
@@ -133,13 +138,14 @@ function doPost(e) {
     var row = [
       orderId, new Date(), name, email, phone, classYear, payment,
       q.A, q.B, q.C, q.D, total, notes, false, '',
+      location,
     ];
     sheet.appendRow(row);
 
     var last = sheet.getLastRow();
     sheet.getRange(last, HEADERS.indexOf('Paid?') + 1).insertCheckboxes();
 
-    try { sendEmails_(orderId, name, email, phone, classYear, payment, q, total, notes); } catch (err) { /* don't fail the order over email */ }
+    try { sendEmails_(orderId, name, email, phone, classYear, payment, q, total, notes, location); } catch (err) { /* don't fail the order over email */ }
 
     return json_({ ok: true, orderId: orderId });
   } finally {
@@ -192,6 +198,10 @@ function getSheet_() {
     sheet.appendRow(HEADERS);
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
     sheet.setFrozenRows(1);
+  } else if (sheet.getLastColumn() < HEADERS.length) {
+    // New columns were added to HEADERS since this sheet was created: fill in the missing header cells.
+    var from = sheet.getLastColumn();
+    sheet.getRange(1, from + 1, 1, HEADERS.length - from).setValues([HEADERS.slice(from)]).setFontWeight('bold');
   }
   return sheet;
 }
@@ -229,7 +239,7 @@ function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
-function sendEmails_(orderId, name, email, phone, classYear, payment, q, total, notes) {
+function sendEmails_(orderId, name, email, phone, classYear, payment, q, total, notes, location) {
   var lines = CONFIG.DESIGNS.filter(function (id) { return q[id] > 0; }).map(function (id) {
     return '  ' + id + '. ' + CONFIG.DESIGN_NAMES[id] + ' x ' + q[id];
   }).join('\n');
@@ -245,7 +255,7 @@ function sendEmails_(orderId, name, email, phone, classYear, payment, q, total, 
       'Hi ' + name.split(' ')[0] + ',\n\n' +
       'Your Texas McCombs hat pre-order is logged. Reference: ' + orderId + '\n\n' +
       lines + '\n\n' +
-      'Total hats: ' + total + '\n' +
+      'Total hats: ' + total + (location ? '\nCampus: ' + location : '') + '\n' +
       priceLine + '\n\n' +
       'What happens next:\n' +
       '  1. Ordering closes ' + (CONFIG.DEADLINE ? new Date(CONFIG.DEADLINE).toLocaleString('en-US', { timeZone: 'America/Chicago' }) + ' CT' : 'soon') + '.\n' +
@@ -269,7 +279,7 @@ function sendEmails_(orderId, name, email, phone, classYear, payment, q, total, 
     MailApp.sendEmail(
       CONFIG.NOTIFY_EMAIL,
       'New hat pre-order: ' + name + ' (' + total + ')',
-      name + ' <' + email + '> ' + phone + ', class of ' + classYear + ', pays by ' + payment + '\n\n' +
+      name + ' <' + email + '> ' + phone + ', class of ' + classYear + (location ? ', ' + location : '') + ', pays by ' + payment + '\n\n' +
       lines + '\n' + (notes ? '\nNotes: ' + notes + '\n' : '') +
       '\nRunning totals: ' + counts.totalHats + ' hats from ' + counts.totalOrders + ' people. ' +
       'A=' + counts.byDesign.A + ' B=' + counts.byDesign.B + ' C=' + counts.byDesign.C + ' D=' + counts.byDesign.D
@@ -300,6 +310,14 @@ function setup() {
     var r = rows.length + 1;
     rows.push([id + '. ' + CONFIG.DESIGN_NAMES[id], '=SUM(' + o + col + '2:' + col + ')', CONFIG.MIN_PER_DESIGN, '=IF(B' + r + '>=C' + r + ',"MET","SHORT BY "&(C' + r + '-B' + r + '))']);
   });
+  if (CONFIG.LOCATIONS.length) {
+    rows.push(['', '', '', '']);
+    rows.push(['Campus', 'Hats', 'People', '']);
+    var locCol = String.fromCharCode('A'.charCodeAt(0) + HEADERS.indexOf('Location'));
+    CONFIG.LOCATIONS.forEach(function (loc) {
+      rows.push([loc, '=SUMIF(' + o + locCol + '2:' + locCol + ',"' + loc + '",' + o + 'L2:L)', '=COUNTIF(' + o + locCol + '2:' + locCol + ',"' + loc + '")', '']);
+    });
+  }
   summary.getRange(1, 1, rows.length, 4).setValues(rows);
   summary.getRange(1, 1, 1, 4).setFontWeight('bold');
   summary.getRange(6, 1, 1, 4).setFontWeight('bold');
@@ -311,7 +329,7 @@ function setup() {
 function testPost() {
   var fake = { postData: { contents: JSON.stringify({
     name: 'Test Person', email: 'test+' + Date.now() + '@example.com', phone: '5125550123',
-    classYear: '2027', payment: 'Venmo', notes: 'test', qty: { A: 1, B: 0, C: 2, D: 0 }, accessCode: CONFIG.ACCESS_CODE,
+    classYear: '2027', location: 'DAL', payment: 'Venmo', notes: 'test', qty: { A: 1, B: 0, C: 2, D: 0 }, accessCode: CONFIG.ACCESS_CODE,
   }) } };
   Logger.log(doPost(fake).getContent());
   Logger.log(doGet({ parameter: { action: 'counts' } }).getContent());

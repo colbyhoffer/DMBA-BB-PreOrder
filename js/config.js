@@ -50,6 +50,11 @@ window.PREORDER_CONFIG = {
   maxPerDesignPerPerson: 99,
 
   classYears: ['2027', '2028'],
+  locations: [
+    { code: 'DAL', label: 'Dallas' },
+    { code: 'AUS', label: 'Austin' },
+    { code: 'HOU', label: 'Houston' },
+  ],
 
   payment: {
     venmo: '@ColbyHoffer',

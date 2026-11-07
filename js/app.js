@@ -109,6 +109,10 @@
       return '<label class="choice"><input type="radio" name="classYear" value="' + y + '"' + (i === 0 ? ' required' : '') + '><span>' + y + '</span></label>';
     }).join('');
 
+    $('#location-choices').innerHTML = (C.locations || []).map(function (l, i) {
+      return '<label class="choice"><input type="radio" name="location" value="' + l.code + '"' + (i === 0 ? ' required' : '') + '><span>' + escapeHtml(l.label) + '</span></label>';
+    }).join('');
+
     if (DEMO) $('#demo-banner').hidden = false;
   }
 
@@ -400,6 +404,7 @@
       email: form.email.value.trim().toLowerCase(),
       phone: form.phone.value.trim(),
       classYear: (form.querySelector('[name="classYear"]:checked') || {}).value || '',
+      location: (form.querySelector('[name="location"]:checked') || {}).value || '',
       payment: (form.querySelector('[name="payment"]:checked') || {}).value || '',
       notes: form.notes.value.trim(),
       accessCode: accessCode,
@@ -413,6 +418,7 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) { form.email.classList.add('is-invalid'); return { error: 'That email doesn\'t look right.' }; }
     if (data.phone.replace(/\D/g, '').length < 10) { form.phone.classList.add('is-invalid'); return { error: 'Please enter a phone number with area code.' }; }
     if (!data.classYear) return { error: 'Pick your class year.' };
+    if (C.locations && C.locations.length && !data.location) return { error: 'Pick your campus.' };
     if (!data.payment) return { error: 'Let us know whether you\'ll pay by Venmo or Zelle.' };
     return { data: data };
   }
