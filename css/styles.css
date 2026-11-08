@@ -172,8 +172,8 @@ body.is-locked > main, body.is-locked > header, body.is-locked > footer { visibi
 .designs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
 .design-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; transition: border-color 0.15s, box-shadow 0.15s; }
 .design-card.is-selected { border-color: var(--burnt-orange); box-shadow: 0 0 0 4px rgba(191, 87, 0, 0.12); }
-.design-img { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 14px; height: 180px; display: grid; place-items: center; overflow: hidden; }
-.design-img img { max-height: 100%; max-width: 100%; width: auto; object-fit: contain; }
+.design-img { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 14px; height: 180px; display: block; overflow: hidden; }
+.design-img img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .view-toggle { display: flex; gap: 4px; margin: -6px 0 12px; }
 .view-btn { flex: 1; font: inherit; font-size: 0.78rem; font-weight: 700; padding: 5px 0; border: 1.5px solid var(--border); background: var(--white); color: var(--text-muted); cursor: pointer; border-radius: 999px; }
 .view-btn.is-active { background: var(--charcoal); border-color: var(--charcoal); color: var(--white); }
@@ -259,5 +259,6 @@ body.is-locked > main, body.is-locked > header, body.is-locked > footer { visibi
 }
 @media (max-width: 480px) {
   .steps, .designs, .progress-grid { grid-template-columns: 1fr; }
+  .design-img { height: 220px; }
   .topbar-link { display: none; }
 }
