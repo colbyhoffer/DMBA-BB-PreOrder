@@ -21,7 +21,7 @@ window.PREORDER_CONFIG = {
   // Central Time is -05:00 during daylight time, -06:00 after the first Sunday in November.
   deadline: '2026-11-15T23:59:00-06:00',
   // Short note shown under the countdown. '' to hide.
-  siteNotice: 'Reopened for late orders until midnight tonight.',
+  siteNotice: '',
   // Time zone used when showing the deadline to visitors.
   displayTimeZone: 'America/Chicago',
 
