@@ -14,14 +14,14 @@
 
 // Bump this whenever you redeploy. The site's counts endpoint echoes it so
 // you can confirm which version is live: open the /exec URL with ?action=counts
-var SCRIPT_VERSION = '2026-11-07b';
+var SCRIPT_VERSION = '2026-11-15a';
 
 var CONFIG = {
   SHEET_NAME: 'Orders',
   SUMMARY_SHEET_NAME: 'Summary',
 
   // Must match js/config.js. ISO string with offset. '' disables enforcement.
-  DEADLINE: '2026-11-13T23:59:00-06:00',
+  DEADLINE: '2026-11-15T23:59:00-06:00',
 
   // Must match the password behind js/config.js accessCodeHash. '' disables the check.
   ACCESS_CODE: 'bevo',
@@ -29,6 +29,8 @@ var CONFIG = {
   LOCATIONS: ['DAL', 'AUS', 'HOU'],   // '' in the list is not allowed; [] disables the check
 
   DESIGNS: ['A', 'B', 'C', 'D'],
+  // Designs pulled from the order (missed the minimum). Orders for these are refused.
+  CLOSED_DESIGNS: ['D'],
   DESIGN_NAMES: {
     A: 'Burnt Orange / White Rope',
     B: 'Black / Burnt Orange Rope',
@@ -121,12 +123,15 @@ function doPost(e) {
 
     var q = {};
     var total = 0;
+    var closedPicked = [];
     CONFIG.DESIGNS.forEach(function (id) {
       var n = parseInt((body.qty || {})[id], 10) || 0;
       n = Math.max(0, Math.min(CONFIG.MAX_PER_DESIGN, n));
+      if (n > 0 && CONFIG.CLOSED_DESIGNS.indexOf(id) >= 0) { closedPicked.push(id); n = 0; }
       q[id] = n;
       total += n;
     });
+    if (closedPicked.length) return json_({ ok: false, error: 'Design ' + closedPicked.join(', ') + ' is no longer available. Reload the page and pick another design.' });
     if (total === 0) return json_({ ok: false, error: 'Pick at least one hat.' });
 
     var sheet = getSheet_();

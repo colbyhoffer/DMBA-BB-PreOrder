@@ -103,6 +103,10 @@
     });
     $('#closed-date').textContent = fmtDate(deadline);
     $('#countdown-date').textContent = fmtDate(deadline);
+    if (C.siteNotice) {
+      $('#countdown-notice').textContent = C.siteNotice;
+      $('#countdown-notice').hidden = false;
+    }
 
     var yearWrap = $('#class-year-choices');
     yearWrap.innerHTML = C.classYears.map(function (y, i) {
@@ -266,7 +270,7 @@
         return '<span class="swatch" style="background:' + c + '"></span>';
       }).join('');
       return (
-        '<div class="design-card" data-id="' + d.id + '">' +
+        '<div class="design-card' + (d.unavailable ? ' is-unavailable' : '') + '" data-id="' + d.id + '"' + (d.unavailable ? ' aria-disabled="true"' : '') + '>' +
           '<div class="design-img">' +
             '<img class="design-img-front" src="' + d.image + '" alt="Design ' + d.id + ': ' + escapeHtml(d.name) + ', front" loading="lazy">' +
             (d.sideImage ? '<img class="design-img-side" src="' + d.sideImage + '" alt="Design ' + d.id + ': ' + escapeHtml(d.name) + ', side" loading="lazy" hidden>' : '') +
@@ -276,10 +280,11 @@
               '<button type="button" class="view-btn is-active" data-view="front">Front</button>' +
               '<button type="button" class="view-btn" data-view="side">Side</button>' +
             '</div>' : '') +
+          (d.unavailable ? '<span class="unavailable-tag">Not available: ' + escapeHtml(d.unavailable) + '</span>' : '') +
           '<div class="design-head"><span class="design-letter">' + d.id + '</span><span class="design-name">' + escapeHtml(d.name) + '</span><span class="swatches">' + swatches + '</span></div>' +
           '<p class="design-style">' + escapeHtml(d.style) + '</p>' +
           '<p class="design-colorway">' + escapeHtml(d.colorway) + (d.sidePatch ? '<br><span class="design-side">Side: ' + escapeHtml(d.sidePatch) + '</span>' : '') + '</p>' +
-          '<div class="qty" role="group" aria-label="Quantity for design ' + d.id + '">' +
+          '<div class="qty' + (d.unavailable ? ' is-off' : '') + '" role="group" aria-label="Quantity for design ' + d.id + '">' +
             '<button type="button" data-dir="-1" aria-label="Remove one">&minus;</button>' +
             '<span class="qty-value" aria-live="polite">0</span>' +
             '<button type="button" data-dir="1" aria-label="Add one">+</button>' +
@@ -302,6 +307,7 @@
       if (!btn || closed) return;
       var card = btn.closest('.design-card');
       var id = card.getAttribute('data-id');
+      if (card.classList.contains('is-unavailable')) return;
       var next = qty[id] + parseInt(btn.getAttribute('data-dir'), 10);
       qty[id] = Math.max(0, Math.min(C.maxPerDesignPerPerson, next));
       updateCard(card);
@@ -314,8 +320,9 @@
     var id = card.getAttribute('data-id');
     card.querySelector('.qty-value').textContent = qty[id];
     card.classList.toggle('is-selected', qty[id] > 0);
-    card.querySelector('[data-dir="-1"]').disabled = qty[id] === 0;
-    card.querySelector('[data-dir="1"]').disabled = qty[id] >= C.maxPerDesignPerPerson;
+    var off = card.classList.contains('is-unavailable');
+    card.querySelector('[data-dir="-1"]').disabled = off || qty[id] === 0;
+    card.querySelector('[data-dir="1"]').disabled = off || qty[id] >= C.maxPerDesignPerPerson;
   }
 
   function updateSummary() {
@@ -354,12 +361,14 @@
       var n = (counts.byDesign && counts.byDesign[d.id]) || 0;
       var met = n >= C.minPerDesign;
       var p = Math.min(100, (n / C.minPerDesign) * 100);
+      var pill = d.unavailable
+        ? '<span class="status-pill dropped">Dropped</span>'
+        : '<span class="status-pill ' + (met ? 'met' : 'short') + '">' + (met ? 'Min hit' : (C.minPerDesign - n) + ' to go') + '</span>';
       return (
-        '<div class="progress-card">' +
+        '<div class="progress-card' + (d.unavailable ? ' is-unavailable' : '') + '">' +
           '<div class="progress-card-head"><span class="design-letter">' + d.id + '</span><span class="progress-card-name">' + escapeHtml(d.name) + '</span></div>' +
           '<div class="bar' + (met ? ' is-met' : '') + '"><div class="bar-fill" style="width:' + p + '%"></div></div>' +
-          '<div class="progress-card-count"><span><strong>' + n + '</strong> / ' + C.minPerDesign + '</span>' +
-          '<span class="status-pill ' + (met ? 'met' : 'short') + '">' + (met ? 'Min hit' : (C.minPerDesign - n) + ' to go') + '</span></div>' +
+          '<div class="progress-card-count"><span><strong>' + n + '</strong> / ' + C.minPerDesign + '</span>' + pill + '</div>' +
         '</div>'
       );
     }).join('');

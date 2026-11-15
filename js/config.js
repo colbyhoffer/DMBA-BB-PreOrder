@@ -19,7 +19,9 @@ window.PREORDER_CONFIG = {
 
   // Order window closes at this time. Use an ISO string with offset.
   // Central Time is -05:00 during daylight time, -06:00 after the first Sunday in November.
-  deadline: '2026-11-13T23:59:00-06:00',
+  deadline: '2026-11-15T23:59:00-06:00',
+  // Short note shown under the countdown. '' to hide.
+  siteNotice: 'Reopened for late orders until midnight tonight.',
   // Time zone used when showing the deadline to visitors.
   displayTimeZone: 'America/Chicago',
 
@@ -101,6 +103,8 @@ window.PREORDER_CONFIG = {
       sideImage: 'images/side-d.png',
       sidePatch: 'White Longhorn',
       swatch: ['#BF5700'],
+      // Set when a design is pulled from the order. It stays visible but can't be picked.
+      unavailable: 'Didn\'t reach the 6-hat minimum',
     },
   ],
 
